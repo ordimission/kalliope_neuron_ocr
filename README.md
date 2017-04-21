@@ -39,8 +39,5 @@ kalliope install --git-url https://github.com/Ultchad/kalliope_neuron_translate
           args:
             - sentence
           say_template: "{{ result }}"
-          tts:
-            pico2wave:
-              language: "es-ES"
 ```
 
