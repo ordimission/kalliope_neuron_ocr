@@ -1,0 +1,12 @@
+---
+  # must match the entry  point class name
+  name: "translate"
+  type: "neuron"
+  author: "https://github.com/Ultchad/"
+
+  kalliope_supported_version: 
+    - 0.4
+
+  tags:
+    - "translate"
+
