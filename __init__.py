@@ -1,1 +1,1 @@
-from translate import Translate
+from ocr import Ocr

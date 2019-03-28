@@ -1,10 +1,10 @@
 import unittest
 
 from kalliope.core.NeuronModule import InvalidParameterException
-from kalliope.neurons.translate import Translate
+from kalliope.neurons.ocr import Ocr
 
 
-class TestWikipediaSearcher(unittest.TestCase):
+class TestOcrSearcher(unittest.TestCase):
     def setUp(self):
         pass
 
