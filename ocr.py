@@ -1,5 +1,5 @@
 import logging
-
+import io
 from kalliope.core.NeuronModule import NeuronModule, InvalidParameterException
 from google.cloud import vision
 
@@ -25,8 +25,8 @@ class Ocr(NeuronModule):
             result = "";
             client = vision.ImageAnnotatorClient()
 
-            with io.open(path, 'rb') as image_file:
-                content = image_uri.read()
+            with io.open(self.image_uri, 'rb') as image_file:
+                content = image_file.read()
 
             image = vision.types.Image(content=content)
 
@@ -39,12 +39,12 @@ class Ocr(NeuronModule):
                             word_text = ''.join([
                                 symbol.text for symbol in word.symbols
                             ])
-                            result.append(word_text)
+                            result += word_text +' '
             self.message = {
                 "result": result
             }
 
-            logger.debug("Ocr returned message: %s" % str(self.message))
+            logger.info("Ocr returned message: %s" % str(self.message))
             self.say(self.message)
 
     def _is_parameters_ok(self):
