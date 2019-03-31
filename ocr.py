@@ -1,7 +1,12 @@
 import logging
 from kalliope.core.NeuronModule import NeuronModule, InvalidParameterException
-from ocr_google import image_text_detection_google
-from ocr_tesseract import image_text_detection_tesseract
+from google.cloud import vision
+import io
+try:
+    from PIL import Image
+except ImportError:
+    import Image
+import pytesseract
 
 logging.basicConfig()
 logger = logging.getLogger("kalliope")
@@ -26,9 +31,9 @@ class Ocr(NeuronModule):
         if self._is_parameters_ok():
             result = "";
             if self.engine == 'tesseract':
-                result = image_text_detection_tesseract(self.image_path, self.lang)
+                result = self.image_text_detection_tesseract(self.image_path, self.lang)
             if self.engine == 'google':
-                result = image_text_detection_google(self.image_path, self.lang)
+                result = self.image_text_detection_google(self.image_path, self.lang)
             self.message = {
                 "result": result
             }
@@ -49,4 +54,33 @@ class Ocr(NeuronModule):
 
         return True
 
+    def image_text_detection_google(filename, iso_language):
+        """
+        This function will handle the core OCR processing of images.
+        """
+        client = vision.ImageAnnotatorClient()
 
+        with io.open(filename, 'rb') as image_file:
+            content = image_file.read()
+
+        image = vision.types.Image(content=content)
+
+        response = client.document_text_detection(image=image)
+        text = response.full_text_annotation.text
+        return filter(lambda x: len(x) > 1, text.split('\n'))
+
+    def image_text_detection_tesseract(filename, iso_language):
+        """
+        This function will handle the core OCR processing of images.
+        """
+        l = None
+        if iso_language == 'fr' or iso_language.startswith('fr_'):
+            l = 'fra'
+        if iso_language == 'en' or iso_language.startswith('en_'):
+            l = 'eng'
+        if l is None:
+            text = pytesseract.image_to_string(Image.open(filename))
+        else:
+            text = pytesseract.image_to_string(Image.open(filename), lang=l)
+        # We'll use Pillow's Image class to open the image and pytesseract to detect the string in the image
+        return filter(lambda x: len(x) > 1, text.split('\n\n'))
