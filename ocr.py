@@ -1,7 +1,7 @@
 import logging
-import io
 from kalliope.core.NeuronModule import NeuronModule, InvalidParameterException
-from google.cloud import vision
+from ocr_google import image_text_detection_google
+from ocr_tesseract import image_text_detection_tesseract
 
 logging.basicConfig()
 logger = logging.getLogger("kalliope")
@@ -20,26 +20,15 @@ class Ocr(NeuronModule):
 
         # get parameters form the neuron
         self.image_path = kwargs.get('image_path', None)
+        self.engine = kwargs.get('engine', 'tesseract')
+        self.lang = kwargs.get('lang', None)
 
         if self._is_parameters_ok():
             result = "";
-            client = vision.ImageAnnotatorClient()
-
-            with io.open(self.image_path, 'rb') as image_file:
-                content = image_file.read()
-
-            image = vision.types.Image(content=content)
-
-            response = client.document_text_detection(image=image)
-
-            for page in response.full_text_annotation.pages:
-                for block in page.blocks:
-                    for paragraph in block.paragraphs:
-                        for word in paragraph.words:
-                            word_text = ''.join([
-                                symbol.text for symbol in word.symbols
-                            ])
-                            result += word_text +' '
+            if self.engine == 'tesseract':
+                result = image_text_detection_tesseract(self.image_path, self.lang)
+            if self.engine == 'google':
+                result = image_text_detection_google(self.image_path, self.lang)
             self.message = {
                 "result": result
             }

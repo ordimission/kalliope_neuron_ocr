@@ -7,4 +7,13 @@
   tasks:
     - name: "Install pip dependencies"
       pip:
-        name: google-cloud-vision
+        name:
+          - google-cloud-vision
+          - opencv-python
+          - pytesseract
+          - pillow
+          - imutils
+          - numpy
+
+
+
