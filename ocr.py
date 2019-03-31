@@ -31,14 +31,13 @@ class Ocr(NeuronModule):
         if self._is_parameters_ok():
             result = "";
             if self.engine == 'tesseract':
-                result = self.image_text_detection_tesseract(self.image_path, self.lang)
+                result = self.image_text_detection_tesseract()
             if self.engine == 'google':
-                result = self.image_text_detection_google(self.image_path, self.lang)
+                result = self.image_text_detection_google()
             self.message = {
                 "result": result
             }
-
-            logger.info("Ocr returned message: %s" % str(self.message))
+            #logger.info("Ocr returned message: %s" % self.message)
             self.say(self.message)
 
     def _is_parameters_ok(self):
@@ -54,33 +53,35 @@ class Ocr(NeuronModule):
 
         return True
 
-    def image_text_detection_google(filename, iso_language):
+    def image_text_detection_google(self):
         """
         This function will handle the core OCR processing of images.
         """
         client = vision.ImageAnnotatorClient()
 
-        with io.open(filename, 'rb') as image_file:
+        with io.open(self.image_path, 'rb') as image_file:
             content = image_file.read()
 
         image = vision.types.Image(content=content)
 
         response = client.document_text_detection(image=image)
         text = response.full_text_annotation.text
-        return filter(lambda x: len(x) > 1, text.split('\n'))
+        #return filter(lambda x: len(x) > 1, text.split('\n'))
+        return text
 
-    def image_text_detection_tesseract(filename, iso_language):
+    def image_text_detection_tesseract(self):
         """
         This function will handle the core OCR processing of images.
         """
         l = None
-        if iso_language == 'fr' or iso_language.startswith('fr_'):
+        if self.lang == 'fr' or self.lang.startswith('fr_'):
             l = 'fra'
-        if iso_language == 'en' or iso_language.startswith('en_'):
+        if self.lang  == 'en' or self.lang.startswith('en_'):
             l = 'eng'
         if l is None:
-            text = pytesseract.image_to_string(Image.open(filename))
+            text = pytesseract.image_to_string(Image.open(self.image_path))
         else:
-            text = pytesseract.image_to_string(Image.open(filename), lang=l)
+            text = pytesseract.image_to_string(Image.open(self.image_path), lang=l)
         # We'll use Pillow's Image class to open the image and pytesseract to detect the string in the image
-        return filter(lambda x: len(x) > 1, text.split('\n\n'))
+        #return filter(lambda x: len(x) > 1, text.split('\n\n')).join('\n')
+        return text
