@@ -7,7 +7,7 @@ Neuron to perform OCR with google cloud vision API
 ## Installation
 
 ```bash
-kalliope install --git-url https://github.com/Ultchad/kalliope_neuron_translate
+kalliope install --git-url https://github.com/ordimission/kalliope_neuron_ocr
 ```
 
 ## Options
@@ -16,7 +16,7 @@ kalliope install --git-url https://github.com/Ultchad/kalliope_neuron_translate
 |-----------|----------|---------|----------------------------------------|----------------------------------------------------------------------------------|
 | lang_out  | yes      |         | E.g: "en", "fr", "Spanish", "Français" | Language to translate sentence: langage code ("en") or language name ("Spanish") |
 | lang_in   | no       |  auto   | E.g: "auto", "en", "fr"                | Language of original sentence: "auto" for automatique detection or lang code     |
-| imageUri  | yes      |         |                                        | Sentence translate                                                               |
+| image_path  | yes      |         |                                        | Sentence translate                                                               |
 
 [Langage support and ISO-639-1 Code](https://cloud.google.com/translate/docs/languages) 
 

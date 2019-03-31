@@ -19,13 +19,13 @@ class Ocr(NeuronModule):
         self.message = None
 
         # get parameters form the neuron
-        self.image_uri = kwargs.get('image_uri', None)
+        self.image_path = kwargs.get('image_path', None)
 
         if self._is_parameters_ok():
             result = "";
             client = vision.ImageAnnotatorClient()
 
-            with io.open(self.image_uri, 'rb') as image_file:
+            with io.open(self.image_path, 'rb') as image_file:
                 content = image_file.read()
 
             image = vision.types.Image(content=content)
@@ -55,8 +55,8 @@ class Ocr(NeuronModule):
         .. raises:: InvalidParameterException
         """
 
-        if self.image_uri is None:
-            raise InvalidParameterException("Ocr needs an image_uri")
+        if self.image_path is None:
+            raise InvalidParameterException("Ocr needs an image path")
 
         return True
 
